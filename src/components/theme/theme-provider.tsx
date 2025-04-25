@@ -24,35 +24,30 @@ export function ThemeProvider({
   children,
   defaultTheme = "system",
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
-    () => {
-      const storedTheme = localStorage.getItem("theme") as string | null;
-      return (storedTheme === "dark" || storedTheme === "light" || storedTheme === "system")
-        ? storedTheme
-        : defaultTheme;
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window !== "undefined") {
+      const storedTheme = localStorage.getItem("theme") as Theme | null;
+      return storedTheme || defaultTheme;
     }
-  );
+    return defaultTheme;
+  });
 
   useEffect(() => {
     const root = window.document.documentElement;
     root.classList.remove("light", "dark");
 
+    let activeTheme: "light" | "dark";
     if (theme === "system") {
-      const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-        .matches
+      activeTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
         ? "dark"
         : "light";
-
-      root.classList.add(systemTheme);
-      applyThemeColors(systemTheme);
-      return;
+    } else {
+      activeTheme = theme;
     }
 
-    root.classList.add(theme);
-    applyThemeColors(theme);
-  }, [theme]);
+    root.classList.add(activeTheme);
 
-  const applyThemeColors = (activeTheme: "light" | "dark") => {
+    // Aplicar variables CSS del tema
     const colors = themeConfig[activeTheme];
     Object.entries(colors).forEach(([category, values]) => {
       Object.entries(values).forEach(([name, value]) => {
@@ -62,13 +57,39 @@ export function ThemeProvider({
         );
       });
     });
-  };
+  }, [theme]);
+
+  // Escuchar cambios en el tema del sistema
+  useEffect(() => {
+    if (theme === "system") {
+      const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+      const handleChange = () => {
+        const root = window.document.documentElement;
+        const systemTheme = mediaQuery.matches ? "dark" : "light";
+        root.classList.remove("light", "dark");
+        root.classList.add(systemTheme);
+        
+        const colors = themeConfig[systemTheme];
+        Object.entries(colors).forEach(([category, values]) => {
+          Object.entries(values).forEach(([name, value]) => {
+            document.documentElement.style.setProperty(
+              `--${category}-${name}`,
+              value as string
+            );
+          });
+        });
+      };
+
+      mediaQuery.addEventListener("change", handleChange);
+      return () => mediaQuery.removeEventListener("change", handleChange);
+    }
+  }, [theme]);
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem("theme", theme);
-      setTheme(theme);
+    setTheme: (newTheme: Theme) => {
+      localStorage.setItem("theme", newTheme);
+      setTheme(newTheme);
     },
   };
 
@@ -81,9 +102,8 @@ export function ThemeProvider({
 
 export const useTheme = () => {
   const context = useContext(ThemeProviderContext);
-
-  if (context === undefined)
+  if (context === undefined) {
     throw new Error("useTheme must be used within a ThemeProvider");
-
+  }
   return context;
 };

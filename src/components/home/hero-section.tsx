@@ -28,7 +28,7 @@ export function HeroSection() {
         {[...Array(10)].map((_, index) => (
           <motion.div
             key={index}
-            className="absolute text-white/10"
+            className="absolute text-foreground/10"
             style={{
               top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
@@ -54,26 +54,26 @@ export function HeroSection() {
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-16">
           {/* Content */}
           <motion.div 
-            className="flex-1 text-center lg:text-left text-slate-900"
+            className="flex-1 text-center lg:text-left"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight text-slate-900">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight text-foreground">
               Productos de Calidad para tu Felino Favorito
             </h1>
-            <p className="text-lg md:text-xl mb-8 max-w-lg mx-auto lg:mx-0 text-slate-800">
+            <p className="text-lg md:text-xl mb-8 max-w-lg mx-auto lg:mx-0 text-muted-foreground">
               Todo lo que tu gato necesita para una vida feliz y saludable en un solo lugar.
             </p>
             
             <div className="flex flex-col sm:flex-row justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4">
-              <Button asChild size="lg" className="rounded-full text-md bg-slate-900 hover:bg-slate-800 text-white">
+              <Button asChild size="lg" className="rounded-full text-md">
                 <Link to="/productos" className="group">
                   Comprar ahora 
                   <MoveRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="rounded-full text-md bg-white/80 border-slate-300 hover:bg-white text-slate-900">
+              <Button asChild variant="outline" size="lg" className="rounded-full text-md">
                 <Link to="#cat-quiz">
                   Descubrir productos
                 </Link>
@@ -81,15 +81,15 @@ export function HeroSection() {
             </div>
             
             <div className="mt-8 flex justify-center lg:justify-start space-x-6">
-              <div className="flex items-center space-x-2 text-slate-800">
+              <div className="flex items-center space-x-2 text-muted-foreground">
                 <ShoppingBag className="h-5 w-5" />
                 <span className="text-sm font-medium">Envío Gratis</span>
               </div>
-              <div className="flex items-center space-x-2 text-slate-800">
+              <div className="flex items-center space-x-2 text-muted-foreground">
                 <Heart className="h-5 w-5" />
                 <span className="text-sm font-medium">Garantía</span>
               </div>
-              <div className="flex items-center space-x-2 text-slate-800">
+              <div className="flex items-center space-x-2 text-muted-foreground">
                 <Search className="h-5 w-5" />
                 <span className="text-sm font-medium">Soporte 24/7</span>
               </div>
@@ -105,7 +105,7 @@ export function HeroSection() {
             style={{ y: parallaxValue }}
           >
             <div className="relative">
-              <div className="absolute -inset-4 rounded-full bg-blue-300/20 blur-3xl"></div>
+              <div className="absolute -inset-4 rounded-full bg-accent/20 blur-3xl"></div>
               <img 
                 src="https://images.pexels.com/photos/320014/pexels-photo-320014.jpeg" 
                 alt="Gato jugando con juguete" 
@@ -120,7 +120,7 @@ export function HeroSection() {
                 transition={{ duration: 0.8, delay: 0.6 }}
                 whileHover={{ y: -5 }}
               >
-                <div className="relative bg-white rounded-lg overflow-hidden h-24">
+                <div className="relative bg-background rounded-lg overflow-hidden h-24">
                   <img 
                     src="https://images.pexels.com/photos/1031251/pexels-photo-1031251.jpeg" 
                     alt="Juguete para gatos" 
@@ -128,8 +128,8 @@ export function HeroSection() {
                   />
                 </div>
                 <div className="mt-2">
-                  <h3 className="text-xs font-medium text-white">Juguetes premium</h3>
-                  <p className="text-[11px] text-white/80">Diversión gatuna</p>
+                  <h3 className="text-xs font-medium text-card-foreground">Juguetes premium</h3>
+                  <p className="text-[11px] text-muted-foreground">Diversión gatuna</p>
                 </div>
               </motion.div>
               
@@ -141,7 +141,7 @@ export function HeroSection() {
                 whileHover={{ y: -5 }}
                 style={{animationDelay: '0.5s'}}
               >
-                <div className="relative bg-white rounded-lg overflow-hidden h-24">
+                <div className="relative bg-background rounded-lg overflow-hidden h-24">
                   <img 
                     src="https://images.pexels.com/photos/6957882/pexels-photo-6957882.jpeg" 
                     alt="Comida para gatos" 
@@ -149,8 +149,8 @@ export function HeroSection() {
                   />
                 </div>
                 <div className="mt-2">
-                  <h3 className="text-xs font-medium text-white">Alimentación natural</h3>
-                  <p className="text-[11px] text-white/80">Nutrición premium</p>
+                  <h3 className="text-xs font-medium text-card-foreground">Alimentación natural</h3>
+                  <p className="text-[11px] text-muted-foreground">Nutrición premium</p>
                 </div>
               </motion.div>
             </div>
