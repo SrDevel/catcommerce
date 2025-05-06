@@ -9,10 +9,8 @@ export interface Product {
   stock: number;
   rating: number;
   reviewCount: number;
-  featured: number; // 0-10 scale, 0 = not featured
-  ageRange?: string[]; // 'Gatito', 'Adulto', 'Senior'
+  featured: number;
+  ageRange: string[];
   createdAt: string;
-  attributes?: {
-    [key: string]: string | number | boolean;
-  };
+  attributes?: Record<string, any>;
 }

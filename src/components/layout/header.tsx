@@ -1,8 +1,16 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
-  Cat, ShoppingBag, Menu, X, Search, 
-  HeartIcon, User, ChevronDown 
+  Cat,
+  ShoppingBag,
+  Menu,
+  X,
+  Search,
+  Heart,
+  User,
+  ChevronDown,
+  LogIn,
+  UserPlus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme/theme-toggle';
@@ -13,7 +21,8 @@ import {
   DropdownMenu, 
   DropdownMenuContent, 
   DropdownMenuItem, 
-  DropdownMenuTrigger 
+  DropdownMenuTrigger,
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu';
 import { Input } from '@/components/ui/input';
 
@@ -22,6 +31,8 @@ export function Header() {
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const closeCartTimeout = useRef<NodeJS.Timeout>();
 
   // Change header style on scroll
   useEffect(() => {
@@ -38,6 +49,19 @@ export function Header() {
   }, [location]);
 
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  const handleCartEnter = () => {
+    if (closeCartTimeout.current) {
+      clearTimeout(closeCartTimeout.current);
+    }
+    setIsCartOpen(true);
+  };
+
+  const handleCartLeave = () => {
+    closeCartTimeout.current = setTimeout(() => {
+      setIsCartOpen(false);
+    }, 300);
+  };
 
   const categories = [
     { name: 'Alimentos', path: '/productos?categoria=alimentos' },
@@ -57,19 +81,19 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
-            <Cat className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-            <span className="font-bold text-xl text-slate-900 dark:text-white">CatCommerce</span>
+            <Cat className="h-7 w-7 text-primary" />
+            <span className="font-bold text-xl text-primary">CatCommerce</span>
           </Link>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-1">
-            <Link to="/" className="px-3 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-400">
+            <Link to="/" className="px-3 py-2 text-sm font-medium text-primary hover:text-primary/90">
               Inicio
             </Link>
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="px-3 py-2 text-sm font-medium text-foreground hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-400 flex items-center gap-1">
+                <Button variant="ghost" className="px-3 py-2 text-sm font-medium text-primary hover:text-primary/90 flex items-center gap-1">
                   Categorías <ChevronDown className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
@@ -81,8 +105,8 @@ export function Header() {
                 ))}
               </DropdownMenuContent>
             </DropdownMenu>
-            
-            <Link to="/productos" className="px-3 py-2 text-sm font-medium text-slate-700 hover:text-blue-600 dark:text-slate-200 dark:hover:text-blue-400">
+
+            <Link to="/productos" className="px-3 py-2 text-sm font-medium text-primary hover:text-primary/90">
               Productos
             </Link>
           </nav>
@@ -95,30 +119,59 @@ export function Header() {
                 placeholder="Buscar productos..."
                 className="w-[180px] lg:w-[260px] pr-8 rounded-full"
               />
-              <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute right-2.5 top-2.5 h-5 w-5 text-muted-foreground" />
             </form>
             
             <ThemeToggle />
             
-            <Link to="/carrito" className="relative">
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <ShoppingBag className="h-5 w-5" />
-                {totalItems > 0 && (
-                  <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
-                    {totalItems}
-                  </Badge>
-                )}
+            <div className="relative"
+                 onMouseEnter={handleCartEnter}
+                 onMouseLeave={handleCartLeave}>
+              <Button variant="ghost" size="icon" className="rounded-full" asChild>
+                <Link to="/carrito">
+                  <ShoppingBag className="h-6 w-6 text-primary" />
+                  {totalItems > 0 && (
+                    <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                      {totalItems}
+                    </Badge>
+                  )}
+                </Link>
               </Button>
-              <CartPreview />
-            </Link>
+              <CartPreview isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+            </div>
             
-            <Button variant="ghost" size="icon" className="rounded-full md:flex hidden">
-              <HeartIcon className="h-5 w-5" />
+            {/* Icono de favoritos con el mismo estilo que el carrito */}
+            <Button variant="ghost" size="icon" className="rounded-full hidden md:flex" asChild>
+              <Link to="/favoritos">
+                <Heart className="h-6 w-6 text-primary" />
+              </Link>
             </Button>
             
-            <Button variant="ghost" size="icon" className="rounded-full md:flex hidden">
-              <User className="h-5 w-5" />
-            </Button>
+            {/* Dropdown de usuario con opciones de login/registro - Corregido para tema oscuro */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full hidden md:flex items-center justify-center">
+                  <div className="text-primary">
+                    <User className="h-6 w-6" />
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuItem asChild>
+                  <Link to="/login" className="w-full flex items-center gap-2">
+                    <LogIn className="h-4 w-4" />
+                    <span>Iniciar sesión</span>
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link to="/register" className="w-full flex items-center gap-2">
+                    <UserPlus className="h-4 w-4" />
+                    <span>Crear cuenta</span>
+                  </Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             <Button 
               variant="ghost" 
@@ -127,9 +180,9 @@ export function Header() {
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? (
-                <X className="h-5 w-5" />
+                <X className="h-6 w-6 text-primary" />
               ) : (
-                <Menu className="h-5 w-5" />
+                <Menu className="h-6 w-6 text-primary" />
               )}
             </Button>
           </div>
@@ -145,7 +198,7 @@ export function Header() {
               placeholder="Buscar productos..."
               className="w-full pr-8 rounded-full"
             />
-            <Search className="absolute right-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute right-2.5 top-2.5 h-5 w-5 text-muted-foreground" />
           </form>
           
           <nav className="flex flex-col space-y-3">
@@ -161,7 +214,7 @@ export function Header() {
                   <Link 
                     key={category.path} 
                     to={category.path}
-                    className="block px-3 py-1 text-sm rounded-md hover:bg-blue-100 dark:hover:bg-blue-900/20"
+                    className="block px-3 py-1 text-sm rounded-md hover:bg-accent hover:text-accent-foreground"
                   >
                     {category.name}
                   </Link>
@@ -171,15 +224,29 @@ export function Header() {
             <Link to="/productos" className="px-3 py-2 text-sm font-medium">
               Productos
             </Link>
-            <Link to="/carrito" className="px-3 py-2 text-sm font-medium">
+            <Link to="/carrito" className="px-3 py-2 text-sm font-medium flex items-center gap-2">
+              <ShoppingBag className="h-5 w-5 text-primary" />
               Carrito
+              {totalItems > 0 && (
+                <Badge variant="destructive" className="ml-auto">
+                  {totalItems}
+                </Badge>
+              )}
             </Link>
-            <Link to="#" className="px-3 py-2 text-sm font-medium">
+            <Link to="/favoritos" className="px-3 py-2 text-sm font-medium flex items-center gap-2">
+              <Heart className="h-5 w-5 text-primary" />
               Favoritos
             </Link>
-            <Link to="#" className="px-3 py-2 text-sm font-medium">
-              Mi Cuenta
-            </Link>
+            <div className="border-t border-border pt-2 mt-2">
+              <Link to="/login" className="px-3 py-2 text-sm font-medium flex items-center gap-2">
+                <LogIn className="h-5 w-5 text-primary" />
+                Iniciar sesión
+              </Link>
+              <Link to="/register" className="px-3 py-2 text-sm font-medium flex items-center gap-2">
+                <UserPlus className="h-5 w-5 text-primary" />
+                Crear cuenta
+              </Link>
+            </div>
           </nav>
         </div>
       )}

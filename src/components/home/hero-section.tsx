@@ -62,7 +62,7 @@ export function HeroSection() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 leading-tight text-foreground">
               Productos de Calidad para tu Felino Favorito
             </h1>
-            <p className="text-lg md:text-xl mb-8 max-w-lg mx-auto lg:mx-0 text-muted-foreground">
+            <p className="text-lg md:text-xl mb-8 max-w-lg mx-auto lg:mx-0 text-foreground">
               Todo lo que tu gato necesita para una vida feliz y saludable en un solo lugar.
             </p>
             
@@ -81,15 +81,15 @@ export function HeroSection() {
             </div>
             
             <div className="mt-8 flex justify-center lg:justify-start space-x-6">
-              <div className="flex items-center space-x-2 text-muted-foreground">
+              <div className="flex items-center space-x-2 text-foreground">
                 <ShoppingBag className="h-5 w-5" />
                 <span className="text-sm font-medium">Envío Gratis</span>
               </div>
-              <div className="flex items-center space-x-2 text-muted-foreground">
+              <div className="flex items-center space-x-2 text-foreground">
                 <Heart className="h-5 w-5" />
                 <span className="text-sm font-medium">Garantía</span>
               </div>
-              <div className="flex items-center space-x-2 text-muted-foreground">
+              <div className="flex items-center space-x-2 text-foreground">
                 <Search className="h-5 w-5" />
                 <span className="text-sm font-medium">Soporte 24/7</span>
               </div>
@@ -122,7 +122,7 @@ export function HeroSection() {
               >
                 <div className="relative bg-background rounded-lg overflow-hidden h-24">
                   <img 
-                    src="https://images.pexels.com/photos/1031251/pexels-photo-1031251.jpeg" 
+                    src="https://images.pexels.com/photos/137049/pexels-photo-137049.jpeg" 
                     alt="Juguete para gatos" 
                     className="w-full h-full object-cover"
                   />
@@ -143,7 +143,7 @@ export function HeroSection() {
               >
                 <div className="relative bg-background rounded-lg overflow-hidden h-24">
                   <img 
-                    src="https://images.pexels.com/photos/6957882/pexels-photo-6957882.jpeg" 
+                    src="https://images.pexels.com/photos/2352276/pexels-photo-2352276.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" 
                     alt="Comida para gatos" 
                     className="w-full h-full object-cover"
                   />

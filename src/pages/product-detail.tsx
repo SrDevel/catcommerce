@@ -14,16 +14,19 @@ import { Product } from '@/types/product';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useCart } from '@/context/cart-context';
+import { formatCurrency } from '@/lib/utils';
 
 export default function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { addToCart } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
-    // Simulate loading product data
     setLoading(true);
     const foundProduct = products.find(p => p.id === id);
     
@@ -34,9 +37,14 @@ export default function ProductDetail() {
   }, [id]);
 
   const handleAddToCart = () => {
-    // Cart functionality would be implemented here
-    console.log(`Added ${quantity} of ${product?.name} to cart`);
-    navigate('/carrito');
+    if (product) {
+      setIsAdding(true);
+      addToCart(product, quantity);
+      setTimeout(() => {
+        setIsAdding(false);
+        navigate('/carrito');
+      }, 500);
+    }
   };
 
   if (loading) {
@@ -85,7 +93,7 @@ export default function ProductDetail() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
         <div className="rounded-lg overflow-hidden bg-white">
           <img 
-            src={product.image} 
+            src={product.images[0]} 
             alt={product.name} 
             className="w-full h-auto object-cover aspect-square"
           />
@@ -112,12 +120,17 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          <div className="flex items-center">
-            <span className="text-3xl font-bold">${product.price.toFixed(2)}</span>
-            {product.discounted && (
-              <Badge className="ml-4 bg-green-100 text-green-800 hover:bg-green-100">
-                ¡Oferta especial!
-              </Badge>
+          <div className="flex items-center space-x-4">
+            <span className="text-3xl font-bold">
+              {formatCurrency(product.price * (1 - product.discount / 100))}
+            </span>
+            {product.discount > 0 && (
+              <>
+                <span className="text-xl text-gray-500 line-through">
+                  {formatCurrency(product.price)}
+                </span>
+                <Badge variant="destructive">-{product.discount}%</Badge>
+              </>
             )}
           </div>
 
@@ -137,6 +150,7 @@ export default function ProductDetail() {
                 size="icon" 
                 className="h-10 rounded-none" 
                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                disabled={isAdding}
               >
                 -
               </Button>
@@ -146,14 +160,27 @@ export default function ProductDetail() {
                 size="icon" 
                 className="h-10 rounded-none" 
                 onClick={() => setQuantity(quantity + 1)}
+                disabled={isAdding}
               >
                 +
               </Button>
             </div>
 
-            <Button className="flex-1" onClick={handleAddToCart}>
-              <ShoppingCart className="mr-2 h-4 w-4" />
-              Agregar al carrito
+            <Button 
+              className="flex-1" 
+              onClick={handleAddToCart}
+              disabled={isAdding || product.stock === 0}
+            >
+              {isAdding ? (
+                "Agregando..."
+              ) : product.stock === 0 ? (
+                "Agotado"
+              ) : (
+                <>
+                  <ShoppingCart className="mr-2 h-4 w-4" />
+                  Agregar al carrito
+                </>
+              )}
             </Button>
           </div>
 

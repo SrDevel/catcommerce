@@ -7,17 +7,22 @@ import { Separator } from '@/components/ui/separator';
 import { formatCurrency } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 
-export function CartPreview() {
+interface CartPreviewProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export function CartPreview({ isOpen, onClose }: CartPreviewProps) {
   const { cartItems, removeFromCart, getTotalPrice } = useCart();
-  const [isOpen, setIsOpen] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
+  const closeCartTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (previewRef.current && !previewRef.current.contains(event.target as Node)) {
-        setIsOpen(false);
+        onClose();
       }
     };
 
@@ -28,7 +33,7 @@ export function CartPreview() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen]);
+  }, [isOpen, onClose]);
 
   if (cartItems.length === 0 && isOpen) {
     return (
@@ -40,7 +45,7 @@ export function CartPreview() {
           <ShoppingBag className="h-12 w-12 text-muted-foreground mb-3" />
           <p className="text-lg font-medium mb-1">Tu carrito está vacío</p>
           <p className="text-sm text-muted-foreground mb-4">¡Agrega algunos productos!</p>
-          <Button onClick={() => setIsOpen(false)} asChild>
+          <Button onClick={onClose} asChild>
             <Link to="/productos" className="flex items-center">
               Ver productos <ChevronRight className="ml-1 h-4 w-4" />
             </Link>
@@ -55,7 +60,9 @@ export function CartPreview() {
   return (
     <div 
       ref={previewRef}
-      className="absolute top-16 right-0 w-80 rounded-lg shadow-lg glassmorphism overflow-hidden z-50"
+      onMouseEnter={() => clearTimeout(closeCartTimeout?.current)}
+      onMouseLeave={() => setTimeout(onClose, 300)}
+      className="absolute top-16 right-0 w-80 rounded-lg shadow-lg overflow-hidden z-50 bg-background border"
     >
       <div className="p-4">
         <div className="flex justify-between items-center mb-3">
@@ -64,7 +71,7 @@ export function CartPreview() {
             variant="ghost"
             size="icon"
             className="h-8 w-8 rounded-full"
-            onClick={() => setIsOpen(false)}
+            onClick={onClose}
           >
             <X className="h-4 w-4" />
           </Button>
