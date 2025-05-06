@@ -11,7 +11,7 @@ export function FeaturedProducts() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const sliderRef = useRef<HTMLDivElement>(null);
   const [showControls, setShowControls] = useState(false);
-  const [sliderWidth, setSliderWidth] = useState(0);
+  // Removed unused sliderWidth state
   const [itemWidth, setItemWidth] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(4);
 
@@ -20,7 +20,7 @@ export function FeaturedProducts() {
     const handleResize = () => {
       if (sliderRef.current) {
         const containerWidth = sliderRef.current.clientWidth;
-        setSliderWidth(containerWidth);
+        // Removed setSliderWidth as sliderWidth is unused
         
         let perPage = 4;
         if (window.innerWidth < 640) {

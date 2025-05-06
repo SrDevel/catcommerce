@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingBag, X, ChevronRight } from 'lucide-react';
 import { useCart } from '@/context/cart-context';
@@ -60,7 +60,7 @@ export function CartPreview({ isOpen, onClose }: CartPreviewProps) {
   return (
     <div 
       ref={previewRef}
-      onMouseEnter={() => clearTimeout(closeCartTimeout?.current)}
+      onMouseEnter={() => closeCartTimeout.current && clearTimeout(closeCartTimeout.current)}
       onMouseLeave={() => setTimeout(onClose, 300)}
       className="absolute top-16 right-0 w-80 rounded-lg shadow-lg overflow-hidden z-50 bg-background border"
     >

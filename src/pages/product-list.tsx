@@ -1,12 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Filter, Search, SlidersHorizontal, Cat, ChevronDown } from 'lucide-react';
+import { Filter, Search, SlidersHorizontal, Cat, ChevronDown, X } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { ProductCard } from '@/components/products/product-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
 import {
   Sheet,
@@ -421,7 +420,7 @@ export default function ProductList() {
                           className="hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full h-4 w-4 inline-flex items-center justify-center ml-1"
                         >
                           <span className="sr-only">Eliminar</span>
-                          <x className="h-3 w-3" />
+                          <X className="h-3 w-3" />
                         </button>
                       </Badge>
                     )}
